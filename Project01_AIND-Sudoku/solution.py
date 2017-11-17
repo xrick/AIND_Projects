@@ -40,13 +40,19 @@ def naked_twins(values):
     Returns:
         the values dictionary with the naked twins eliminated from peers.
     """
+    # Find all instances of naked twins
+    # Eliminate the naked twins as possibilities for their peers
     twins_seen = set()
     for box, val in values.items():
+        # only want to look at boxes which have 2 possible values and weren't already twins
         if len(val) == 2 and box not in twins_seen:
+            # find if a peer is a twin by seeing if their possible values are same
             twin = next((peer for peer in peers[box] if values[peer] == val), None)
             if twin:
                 twins_seen |= {twin} 
+                # filter out the two possible values from all the mutual peers
                 for peer in peers[box] & peers[twin]:
+                    # can just assign even if not changing since assign_value will fast return
                     values = assign_value(values, peer, values[peer].replace(val[0], '').replace(val[1], ''))
     return values
 
